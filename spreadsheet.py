@@ -13,7 +13,7 @@ client = gspread.authorize(creds)
 
 sheet = client.open("frank_api").sheet1
 
-@app.route('/', methods=['POST'])
+@app.route('/', methods=['GET', 'POST'])
 def index():
     if request.method == 'POST':
         req_data = request.get_json(force = True)
@@ -23,6 +23,8 @@ def index():
         timestamp = req_data['timestamp']
 
         return ''
+    elif request.method == 'GET':
+        return "usage: curl -d '{ \"ev\" : \"ev01\", \"online\" : 0, \"timestamp\" : 1234567890}' http://127.0.0.1:5000/"
 
 if __name__ == "__main__":
     app.run(debug=True)
