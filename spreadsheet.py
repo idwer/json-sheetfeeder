@@ -5,7 +5,9 @@ from flask import Flask, request
 
 app = Flask(__name__)
 
-scope = ['https://spreadsheets.google.com/feeds']
+# this was found at https://dev.to/rosejcday/setting-up-python-to-connect-to-google-sheets-2ak7
+scope = ['https://www.googleapis.com/auth/drive']
+
 creds = ServiceAccountCredentials.from_json_keyfile_name('client_secret.json', scope)
 client = gspread.authorize(creds)
 
