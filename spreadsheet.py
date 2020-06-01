@@ -15,9 +15,14 @@ sheet = client.open("frank_api").sheet1
 
 @app.route('/', methods=['POST'])
 def index():
-    req_data = request.get_json(force = True)
+    if request.method == 'POST':
+        req_data = request.get_json(force = True)
 
-    return ''
+        ev = req_data['ev']
+        online = req_data['online']
+        timestamp = req_data['timestamp']
+
+        return ''
 
 if __name__ == "__main__":
     app.run(debug=True)
