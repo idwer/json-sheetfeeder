@@ -1,5 +1,6 @@
 # source: https://www.twilio.com/blog/2017/02/an-easy-way-to-read-and-write-to-a-google-spreadsheet-in-python.html
 import gspread
+
 from oauth2client.service_account import ServiceAccountCredentials
 from flask import Flask, request
 
@@ -25,7 +26,31 @@ def route_api():
     online = req_data['online']
     timestamp = req_data['timestamp']
 
-    return ''
+    cell = ''
+
+    try:
+        # look up the value passed to 'ev'
+        cell = sheet.find(ev)
+        # when receiving non-key data through POST, check whether data in a cell needs updating:
+        if sheet.acell(f'B{cell.row}') != online:
+            sheet.update(f'B{cell.row}', online)
+        if sheet.acell(f'C{cell.row}') != timestamp:
+            sheet.update(f'C{cell.row}', timestamp)
+
+        return f"{cell.row}"
+    # when the cell being looked up isn't found: insert data
+    except gspread.exceptions.CellNotFound:
+        update_cell(sheet, ev, online, timestamp)
+
+        return f"inserted {req_data}\n"
+
+#def update_cell(ev, online, timestamp):
+def update_cell(sheet, ev, online, timestamp):
+    row_count = len(sheet.col_values(1))
+
+    sheet.update_cell(row_count + 1, 1, ev)
+    sheet.update_cell(row_count + 1, 2, online)
+    sheet.update_cell(row_count + 1, 3, timestamp)
 
 if __name__ == "__main__":
     app.run(debug=True)
