@@ -1,6 +1,15 @@
+# source: https://www.twilio.com/blog/2017/02/an-easy-way-to-read-and-write-to-a-google-spreadsheet-in-python.html
+import gspread
+from oauth2client.service_account import ServiceAccountCredentials
 from flask import Flask, request
 
 app = Flask(__name__)
+
+scope = ['https://spreadsheets.google.com/feeds']
+creds = ServiceAccountCredentials.from_json_keyfile_name('client_secret.json', scope)
+client = gspread.authorize(creds)
+
+sheet = client.open("frank_api").sheet1
 
 @app.route('/', methods=['POST'])
 def index():
