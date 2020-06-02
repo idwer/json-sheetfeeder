@@ -1,6 +1,7 @@
 # source: https://www.twilio.com/blog/2017/02/an-easy-way-to-read-and-write-to-a-google-spreadsheet-in-python.html
 import gspread
 
+from datetime import datetime
 from oauth2client.service_account import ServiceAccountCredentials
 from flask import Flask, request
 
@@ -16,7 +17,7 @@ sheet = client.open("frank_api").sheet1
 
 @app.route('/', methods=['GET'])
 def route_home():
-    return "usage: curl -d '{ \"ev\" : \"ev01\", \"online\" : 0, \"timestamp\" : 1234567890}' http://127.0.0.1:5000/"
+    return "usage: curl -d '{ \"ev\" : \"ev01\", \"online\" : 0}' http://127.0.0.1:5000/"
 
 @app.route('/api', methods=['POST'])
 def route_api():
@@ -24,28 +25,29 @@ def route_api():
 
     ev = req_data['ev']
     online = req_data['online']
-    timestamp = req_data['timestamp']
+
+    timestamp = f"{datetime.now()}"
 
     cell = ''
 
     try:
         # look up the value passed to 'ev'
         cell = sheet.find(ev)
-        # when receiving non-key data through POST, check whether data in a cell needs updating:
+        # when receiving non-key data through POST, check whether data in a cell needs updating
+        # toggle 'online'
         if sheet.acell(f'B{cell.row}') != online:
             sheet.update(f'B{cell.row}', online)
-        if sheet.acell(f'C{cell.row}') != timestamp:
-            sheet.update(f'C{cell.row}', timestamp)
+        # overwrite timestamp
+        sheet.update(f'C{cell.row}', timestamp)
 
-        return f"{cell.row}"
+        return ''
     # when the cell being looked up isn't found: insert data
     except gspread.exceptions.CellNotFound:
-        update_cell(sheet, ev, online, timestamp)
+        write_cell(sheet, ev, online, timestamp)
 
-        return f"inserted {req_data}\n"
+        return f"inserted {req_data}"
 
-#def update_cell(ev, online, timestamp):
-def update_cell(sheet, ev, online, timestamp):
+def write_cell(sheet, ev, online, timestamp):
     row_count = len(sheet.col_values(1))
 
     sheet.update_cell(row_count + 1, 1, ev)
