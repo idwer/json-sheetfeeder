@@ -22,7 +22,7 @@ worksheet = sheet.worksheet(config['workspace']['sheet'])
 
 @app.route('/', methods=['GET'])
 def route_home():
-    return "usage: curl -d '{ \"ev\" : \"ev01\", \"online\" : 0}' http://127.0.0.1:5000/"
+    return "usage: curl -d '{ \"ev\" : \"ev01\", \"online\" : 0}' http://127.0.0.1:5000/api"
 
 @app.route('/api', methods=['POST'])
 def route_api():
