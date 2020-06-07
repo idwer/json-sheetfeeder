@@ -1,0 +1,38 @@
+navigate to https://console.cloud.google.com/cloud-resource-manager
+click 'create project'
+cick 'create'
+
+
+navigate to https://console.cloud.google.com/apis/
+click 'enable apis and services'
+
+
+in the search bar with white background, enter 'google sheets api' and click on the emerging api below the search field
+click 'enable'
+
+
+on the left, click 'credentials'
+click 'create credentials' 'service account'
+enter service account name, click 'create'
+configure role: project -> editor, click 'continue'
+
+
+click 'create key', key type: json, click 'create'
+Copy the JSON file to your code directory (where Dockerfile is) and rename it to client_secret.json
+
+
+click  'done'
+
+
+navigate to https://docs.google.com/spreadsheets/
+create and open a new spreadsheet to store parsed json data
+click 'share'
+in the json file is a line with 'client_email', add this email address as an Editor and click 'done'
+
+
+open the file spreadsheet.config and fill in the identifier from the spreadsheet URL:
+the identifier part is surrounded with 'https://docs.google.com/spreadsheets/d/' and '/edit'
+
+
+install dependencies from the command line: 'pip3 install gspread oauth2client'
+at this point you should be able to succesfully start 'python3 spreadsheet.py' and open a browser at http://localhost:5000 for curl instructions
