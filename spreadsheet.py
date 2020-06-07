@@ -1,4 +1,5 @@
 # source: https://www.twilio.com/blog/2017/02/an-easy-way-to-read-and-write-to-a-google-spreadsheet-in-python.html
+import configparser
 import gspread
 
 from datetime import datetime
@@ -13,7 +14,11 @@ scope = ['https://www.googleapis.com/auth/drive']
 creds = ServiceAccountCredentials.from_json_keyfile_name('client_secret.json', scope)
 client = gspread.authorize(creds)
 
-sheet = client.open("frank_api").sheet1
+config = configparser.ConfigParser()
+config.read('spreadsheet.config')
+
+sheet = client.open_by_key(config['spreadsheet']['url_key'])
+worksheet = sheet.worksheet(config['workspace']['sheet'])
 
 @app.route('/', methods=['GET'])
 def route_home():
@@ -32,27 +37,27 @@ def route_api():
 
     try:
         # look up the value passed to 'ev'
-        cell = sheet.find(ev)
+        cell = worksheet.find(ev)
         # when receiving non-key data through POST, check whether data in a cell needs updating
         # toggle 'online'
-        if sheet.acell(f'B{cell.row}') != online:
-            sheet.update(f'B{cell.row}', online)
+        if worksheet.acell(f'B{cell.row}') != online:
+            worksheet.update(f'B{cell.row}', online)
         # overwrite timestamp
-        sheet.update(f'C{cell.row}', timestamp)
+        worksheet.update(f'C{cell.row}', timestamp)
 
         return ''
     # when the cell being looked up isn't found: insert data
     except gspread.exceptions.CellNotFound:
-        write_cell(sheet, ev, online, timestamp)
+        write_cell(worksheet, ev, online, timestamp)
 
         return f"inserted {req_data}"
 
-def write_cell(sheet, ev, online, timestamp):
-    row_count = len(sheet.col_values(1))
+def write_cell(worksheet, ev, online, timestamp):
+    row_count = len(worksheet.col_values(1))
 
-    sheet.update_cell(row_count + 1, 1, ev)
-    sheet.update_cell(row_count + 1, 2, online)
-    sheet.update_cell(row_count + 1, 3, timestamp)
+    worksheet.update_cell(row_count + 1, 1, ev)
+    worksheet.update_cell(row_count + 1, 2, online)
+    worksheet.update_cell(row_count + 1, 3, timestamp)
 
 if __name__ == "__main__":
     app.run(debug=True)
