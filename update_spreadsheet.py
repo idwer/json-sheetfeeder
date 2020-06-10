@@ -11,7 +11,7 @@ worksheet_ready = False
 def update_spreadsheet(key, online):
     global worksheet_ready
 
-    if worksheet_ready == False:
+    if worksheet_ready is False:
         credentials.send_credentials()
         worksheet_ready = True
 
@@ -30,7 +30,6 @@ def update_spreadsheet(key, online):
 
         return f'{key, online, timestamp}'
 
-        return ''
     # when the cell being looked up isn't found: insert data
     except gspread.exceptions.CellNotFound:
         return write_cell(worksheet, key, online, f"{datetime.now()}")

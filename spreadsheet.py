@@ -13,7 +13,7 @@ def route_home():
 
 @app.route('/api', methods=['POST'])
 def route_api():
-    req_data = request.get_json(force = True)
+    req_data = request.get_json(force=True)
 
     return f"inserted {json_handler.handle_json(req_data)}"
 
