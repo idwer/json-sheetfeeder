@@ -1,15 +1,20 @@
 # source: https://www.twilio.com/blog/2017/02/an-easy-way-to-read-and-write-to-a-google-spreadsheet-in-python.html
 
 import credentials
-import json_handler
+import json_handler, update_spreadsheet
 
-from flask import Flask, request
+from flask import Flask, jsonify, request
 
 app = Flask(__name__)
 
 @app.route('/', methods=['GET'])
 def route_home():
     return "usage: curl -d '{ \"ev\" : \"ev01\", \"online\" : 0}' http://127.0.0.1:5000/api"
+
+@app.route('/api/items', methods = ['GET'])
+def route_items():
+    items = update_spreadsheet.get_items()
+    return jsonify(items)
 
 @app.route('/api', methods=['POST'])
 def route_api():

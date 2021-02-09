@@ -8,6 +8,10 @@ from datetime import datetime
 
 worksheet_ready = False
 
+def get_items():
+    worksheet = credentials.get_worksheet(credentials.send_credentials())
+    return worksheet.get_all_values()
+
 def update_spreadsheet(key, online):
     global worksheet_ready
 
